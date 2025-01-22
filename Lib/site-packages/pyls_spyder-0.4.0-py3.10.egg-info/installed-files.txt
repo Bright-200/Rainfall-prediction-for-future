@@ -1,0 +1,12 @@
+../pyls_spyder/__init__.py
+../pyls_spyder/__pycache__/__init__.cpython-310.pyc
+../pyls_spyder/__pycache__/plugin.cpython-310.pyc
+../pyls_spyder/__pycache__/utils.cpython-310.pyc
+../pyls_spyder/plugin.py
+../pyls_spyder/utils.py
+PKG-INFO
+SOURCES.txt
+dependency_links.txt
+entry_points.txt
+requires.txt
+top_level.txt

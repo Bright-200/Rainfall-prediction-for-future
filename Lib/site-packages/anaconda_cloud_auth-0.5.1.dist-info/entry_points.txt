@@ -1,0 +1,5 @@
+[conda]
+anaconda-cloud-auth = anaconda_cloud_auth._conda.entrypoint
+
+[panel.auth]
+anaconda_cloud = anaconda_cloud_auth.panel:AnacondaCloudLoginHandler
