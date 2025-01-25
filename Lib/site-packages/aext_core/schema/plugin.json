@@ -1,8 +1,0 @@
-{
-  "title": "@anaconda/core",
-  "description": "Anaconda integrations for cloud notebooks",
-  "type": "object",
-  "properties": {},
-  "additionalProperties": false,
-  "jupyter.lab.toolbars": {}
-}
