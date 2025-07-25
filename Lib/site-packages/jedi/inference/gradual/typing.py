@@ -32,7 +32,7 @@ _TYPE_ALIAS_TYPES = {
     'DefaultDict': 'collections.defaultdict',
     'Deque': 'collections.deque',
 }
-_PROXY_TYPES = 'Optional Union ClassVar'.split()
+_PROXY_TYPES = 'Optional Union ClassVar Annotated'.split()
 
 
 class TypingModuleName(NameWrapper):
@@ -113,7 +113,7 @@ class ProxyWithGenerics(BaseTypingClassWithGenerics):
         elif string_name == 'Type':
             # The type is actually already given in the index_value
             return self._generics_manager[0]
-        elif string_name == 'ClassVar':
+        elif string_name in ['ClassVar', 'Annotated']:
             # For now don't do anything here, ClassVars are always used.
             return self._generics_manager[0].execute_annotation()
 
@@ -293,6 +293,9 @@ class Callable(BaseTypingInstance):
         else:
             from jedi.inference.gradual.annotation import infer_return_for_callable
             return infer_return_for_callable(arguments, param_values, result_values)
+
+    def py__get__(self, instance, class_value):
+        return ValueSet([self])
 
 
 class Tuple(BaseTypingInstance):
