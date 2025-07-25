@@ -5,6 +5,7 @@ import numpy as np
 import sys
 import plotly.express as px
 from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import OneHotEncoder,MinMaxScaler,StandardScaler;
 import joblib
 
@@ -44,7 +45,8 @@ col,col2=st.columns(2)
 with col:
     with st.expander('Original Data File',icon='📚'):
         st.write(df)
-    st.date_input(label='Select Data to Record')  
+    Dater=st.date_input(label='Type')
+    
     MinTemp= st.number_input('Enter Min Temp',label_visibility='visible',min_value=0.)
     MaxTemp= st.number_input('Enter Max Temp',label_visibility='visible',min_value=0.)
     Rainfall= st.number_input('Enter Rainfall measure',label_visibility='visible',min_value=0.)
@@ -55,11 +57,12 @@ with col:
 # loading all the joblib files in the directory to this platform
 
 with col2:
-   windSpeed9am= st.number_input('Enter WindSpeed 9am Temp measures',label_visibility='visible',min_value=0.)
+   windSpeed9am= st.number_input('Enter WindSpeed 9am Temp measures',label_visibility='visible',min_value=0.,disabled=False)
    windSpeed3am= st.number_input('Enter WindSpeed 3pm Temp measures',label_visibility='visible',min_value=0.)
    Humidity9am= st.number_input('Enter Humidity 9am measures',label_visibility='visible',min_value=0.)
    Humidity3pm= st.number_input('Enter Humidity 3pm',label_visibility='visible',min_value=0.)
    Pressure9am= st.number_input('Enter Pressure 9am',label_visibility='visible',min_value=0.)
+   Pressure3pm= st.number_input('Enter Pressure 3am',label_visibility='visible',min_value=0.)
    Cloud9am= st.number_input('Enter Cloud 9am measures',label_visibility='visible',min_value=0.)
    Cloud3pm= st.number_input('Enter Cloud 3pm measures',label_visibility='visible',min_value=0.)
    Temp9am= st.number_input('Enter Temperature at 9am',label_visibility='visible',min_value=0.)
@@ -67,11 +70,10 @@ with col2:
    
    # creating a model prediction area for the inputs
    
-   for i in rain:
-       st.write(i)
-DataFrame=pd.DataFrame([
-country,MinTemp,MaxTemp,Rainfall,Evaporation,sunshine,windGustSpeed,
-windSpeed9am,windSpeed3am,Humidity9am,Humidity3pm,Pressure9am,Cloud9am,Cloud3pm,Temp9am,Temp3pm])
+   
+DataFrame=pd.DataFrame([{
+'Location':country,'Date':Dater,'MinTemp':MinTemp,"MaxTemp":MaxTemp,"Rainfall":Rainfall,"Evaporation":Evaporation,"Sunshine":sunshine,"WindGustDir":windGustSpeed,
+"WindSpeed9am":windSpeed9am,"WindSpeed3am":windSpeed3am,"Humidity9am":Humidity9am,"Humidity3pm":Humidity3pm,"Pressure9am":Pressure9am,"Pressure3pm":Pressure3pm,"Cloud9am":Cloud9am,"Cloud3pm":Cloud3pm,"Temp9am":Temp9am,"Temp3pm":Temp3pm,'RainToday':RainToday}])
 # creating a helper function for the program to initialize an new data
 def prediction(Data):
     # we accept the input of the data
@@ -83,8 +85,12 @@ def prediction(Data):
     # we encode the columns using OneHotEncoder for the categorical columns
     input_df[rain['encoded_cols']]=rain['encoder'].transform(input_df[rain['categorical_cols']])
     
-    X_input_df=input_df[rain['encoded_cols' +'numerical_cols']]
+    X_input_df=input_df[rain['encoded_cols'] +rain['numerical_cols']]
     pred=rain['model'].predict(X_input_df)[0]
-    probability=rain['model'].prob_predict(X_input_df)[0][list(rain['model'].classes_).index(pred)]
-    return st.write(pred, probability)
+    probability=rain['model'].predict_prob(X_input_df)[0][list(rain['model'].classes_).index(pred)]
+    return st.write(pred),st.write('The probability of rain is :',probability)
     
+    # displaying a the prediction
+
+if st.button('Predict'):
+    prediction(DataFrame)
